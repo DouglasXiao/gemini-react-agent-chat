@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChatSidebar } from './ChatSidebar';
 import { RightPanel } from './RightPanel';
-import type { ChatMessage } from './ChatInterface';
+import type { ChatMessage } from './ChatApp';
 
 interface ChatLayoutProps {
   sessionId: string;
@@ -20,7 +20,6 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
   const [componentData, setComponentData] = useState<any>(null);
 
   useEffect(() => {
-    // Setup SSE connection for session details
     const eventSource = new EventSource(`/api/chat/session_detail?session_id=${sessionId}`);
     
     eventSource.onmessage = (event) => {
@@ -28,15 +27,21 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
         const data = JSON.parse(event.data);
         if (data.type === 'message') {
           const newMessage: ChatMessage = {
-            id: data.id || `msg_${Date.now()}`,
+            message_id: data.message_id || `msg_${Date.now()}`,
+            session_id: data.session_id || sessionId,
             role: data.role || 'assistant',
             content: data.content || '',
+            reasoning_content: data.reasoning_content,
+            tools: data.tools || [],
+            tool_call: data.tool_call || [],
+            is_streaming: data.is_streaming || false,
+            finish_reason: data.finish_reason,
             timestamp: new Date(data.timestamp || Date.now()),
             buttons: data.buttons || [],
           };
           
           setMessages(prev => {
-            const exists = prev.find(msg => msg.id === newMessage.id);
+            const exists = prev.find(msg => msg.message_id === newMessage.message_id);
             if (exists) return prev;
             return [...prev, newMessage];
           });
@@ -63,7 +68,6 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Left Sidebar - Chat */}
       <div className="w-1/2 border-r border-gray-200">
         <ChatSidebar
           messages={messages}
@@ -72,8 +76,6 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
           onButtonClick={handleButtonClick}
         />
       </div>
-
-      {/* Right Panel - Dynamic Components */}
       <div className="w-1/2">
         <RightPanel
           activeComponent={activeComponent}

@@ -1,11 +1,11 @@
 
 import React from 'react';
-import { ChatInterface } from '@/components/chat';
+import { ChatApp } from '@/components/chat';
 
 const Index = () => {
   return (
     <div className="w-full h-screen">
-      <ChatInterface />
+      <ChatApp />
     </div>
   );
 };

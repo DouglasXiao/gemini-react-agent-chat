@@ -1,7 +1,7 @@
 
-export { ChatInterface } from './ChatInterface';
-export { WelcomeChat } from './WelcomeChat';
+export { ChatApp } from './ChatApp';
+export { WelcomeScreen } from './WelcomeScreen';
 export { ChatLayout } from './ChatLayout';
 export { ChatSidebar } from './ChatSidebar';
 export { RightPanel } from './RightPanel';
-export type { ChatMessage } from './ChatInterface';
+export type { ChatMessage } from './ChatApp';

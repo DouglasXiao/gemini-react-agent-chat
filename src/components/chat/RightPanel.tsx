@@ -1,8 +1,5 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
 import { TextAnalysisComponent } from './components/TextAnalysisComponent';
 import { ModelSelectionComponent } from './components/ModelSelectionComponent';
 
@@ -54,14 +51,12 @@ export const RightPanel: React.FC<RightPanelProps> = ({
       {activeComponent && (
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">详细信息</h2>
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={onClose}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 text-gray-500 hover:text-gray-700"
           >
-            <X className="h-4 w-4" />
-          </Button>
+            ✕
+          </button>
         </div>
       )}
       
