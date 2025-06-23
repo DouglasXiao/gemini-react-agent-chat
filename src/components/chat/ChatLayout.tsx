@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChatSidebar } from './ChatSidebar';
 import { RightPanel } from './RightPanel';
+import { createChatRequest } from '../../utils/chatApi';
 import type { ChatMessage } from './ChatApp';
 
 interface ChatLayoutProps {
@@ -20,13 +21,38 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
   const [componentData, setComponentData] = useState<any>(null);
   const [currentEventSource, setCurrentEventSource] = useState<EventSource | null>(null);
 
-  const startSSEConnection = (conversationId: string) => {
+  const startSSEConnection = (conversationId: string, lastMessage?: ChatMessage) => {
     // Close existing connection if any
     if (currentEventSource) {
       currentEventSource.close();
     }
 
-    const eventSource = new EventSource(`/conversation?conversation_id=${conversationId}`, {
+    // Create the payload for the SSE request
+    const parentMessageId = lastMessage?.message_id || 'client-created-root';
+    
+    // Create a dummy message to trigger the SSE connection
+    const dummyMessage = lastMessage ? lastMessage.content : '';
+    const chatRequest = createChatRequest(dummyMessage, conversationId, parentMessageId);
+
+    // Convert the payload to a query string for EventSource
+    const params = new URLSearchParams({
+      action: chatRequest.action,
+      conversation_id: conversationId,
+      parent_message_id: parentMessageId,
+      model: chatRequest.model,
+      timezone_offset_min: chatRequest.timezone_offset_min.toString(),
+      timezone: chatRequest.timezone,
+      messages: JSON.stringify(chatRequest.messages),
+      conversation_mode: JSON.stringify(chatRequest.conversation_mode),
+      enable_message_followups: chatRequest.enable_message_followups.toString(),
+      system_hints: JSON.stringify(chatRequest.system_hints),
+      supports_buffering: chatRequest.supports_buffering.toString(),
+      supported_encodings: JSON.stringify(chatRequest.supported_encodings),
+      client_contextual_info: JSON.stringify(chatRequest.client_contextual_info),
+      paragen_cot_summary_display_override: chatRequest.paragen_cot_summary_display_override
+    });
+
+    const eventSource = new EventSource(`/v1/chat/completions?${params.toString()}`, {
       withCredentials: false
     });
     
@@ -81,7 +107,8 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
 
   useEffect(() => {
     // Start SSE connection when component mounts
-    startSSEConnection(sessionId);
+    const lastMessage = messages[messages.length - 1];
+    startSSEConnection(sessionId, lastMessage);
 
     return () => {
       if (currentEventSource) {
@@ -98,7 +125,8 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
 
   const handleNewMessageSent = (conversationId: string) => {
     // Restart SSE connection for the new message
-    startSSEConnection(conversationId);
+    const lastMessage = messages[messages.length - 1];
+    startSSEConnection(conversationId, lastMessage);
   };
 
   return (
