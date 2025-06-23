@@ -1,7 +1,8 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MessageInput } from './MessageInput';
 import { MessageList } from './MessageList';
+import { createChatRequest, sendChatMessage } from '../../utils/chatApi';
 import type { ChatMessage } from './ChatApp';
 
 interface ChatSidebarProps {
@@ -9,6 +10,7 @@ interface ChatSidebarProps {
   sessionId: string;
   onNewSession: () => void;
   onButtonClick: (buttonId: string, action: string, data?: any) => void;
+  onNewMessageSent?: (conversationId: string) => void;
 }
 
 export const ChatSidebar: React.FC<ChatSidebarProps> = ({
@@ -16,6 +18,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   sessionId,
   onNewSession,
   onButtonClick,
+  onNewMessageSent,
 }) => {
   const [newMessage, setNewMessage] = useState('');
   const [files, setFiles] = useState<File[]>([]);
@@ -27,21 +30,33 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     setIsLoading(true);
     
     try {
-      const formData = new FormData();
-      formData.append('message', newMessage);
-      formData.append('session_id', sessionId);
-      files.forEach((file, index) => {
-        formData.append(`file_${index}`, file);
-      });
+      // Get the last message ID as parent_message_id
+      const lastMessage = messages[messages.length - 1];
+      const parentMessageId = lastMessage?.message_id || 'client-created-root';
+      
+      const chatRequest = createChatRequest(newMessage, sessionId, parentMessageId);
+      const { conversationId } = await sendChatMessage(chatRequest);
 
-      await fetch('/api/chat/stream_chat', {
-        method: 'POST',
-        body: formData,
-      });
+      // Add user message to the messages list immediately
+      const userMessage: ChatMessage = {
+        message_id: chatRequest.messages[0].id,
+        session_id: sessionId,
+        role: 'user',
+        content: newMessage,
+        is_streaming: false,
+        timestamp: new Date(),
+        files: files.length > 0 ? files : undefined,
+      };
+
+      // Notify parent component about new message sent
+      if (onNewMessageSent && conversationId) {
+        onNewMessageSent(conversationId);
+      }
 
       setNewMessage('');
       setFiles([]);
     } catch (error) {
+      console.error('Send message error:', error);
       alert('发送消息失败');
     } finally {
       setIsLoading(false);

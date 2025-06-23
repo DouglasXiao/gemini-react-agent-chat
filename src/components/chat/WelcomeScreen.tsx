@@ -1,8 +1,9 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { FileUpload } from './FileUpload';
 import { MessageInput } from './MessageInput';
 import { ExampleCards } from './ExampleCards';
+import { createChatRequest, sendChatMessage } from '../../utils/chatApi';
 import type { ChatMessage } from './ChatApp';
 
 interface WelcomeScreenProps {
@@ -23,27 +24,16 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onChatStart }) => 
     setIsLoading(true);
     
     try {
-      const formData = new FormData();
-      formData.append('message', message);
-      files.forEach((file, index) => {
-        formData.append(`file_${index}`, file);
-      });
+      const chatRequest = createChatRequest(message);
+      const { conversationId } = await sendChatMessage(chatRequest);
 
-      const response = await fetch('/api/chat/stream_chat', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('API request failed');
+      if (!conversationId) {
+        throw new Error('No conversation ID received');
       }
 
-      const data = await response.json();
-      const sessionId = data.session_id;
-
       const userMessage: ChatMessage = {
-        message_id: `user_${Date.now()}`,
-        session_id: sessionId,
+        message_id: chatRequest.messages[0].id,
+        session_id: conversationId,
         role: 'user',
         content: message,
         is_streaming: false,
@@ -51,7 +41,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onChatStart }) => 
         files: files.length > 0 ? files : undefined,
       };
 
-      onChatStart(sessionId, [userMessage]);
+      onChatStart(conversationId, [userMessage]);
       
     } catch (error) {
       console.error('Chat start error:', error);
