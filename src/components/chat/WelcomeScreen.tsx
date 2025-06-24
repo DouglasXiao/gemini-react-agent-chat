@@ -60,24 +60,36 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onChatStart }) => 
       <div className="w-full max-w-4xl mx-auto mb-8">
         <div className="flex justify-start">
           <Select value={selectedAgent} onValueChange={setSelectedAgent}>
-            <SelectTrigger className="w-48 bg-white border border-gray-200 rounded-lg shadow-sm">
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-900">
-                  {selectedAgent === 'prompt-agent' ? 'Prompt agent' : 'Visual agent'}
-                </span>
-                <span className="text-xs text-gray-500 font-normal">
-                  {selectedAgent === 'prompt-agent' ? '提示智能体' : '视觉智能体'}
-                </span>
+            <SelectTrigger className="w-64 h-11 bg-white border border-gray-300 rounded-xl shadow-sm hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200">
+              <div className="flex items-center justify-between w-full">
+                <div className="flex flex-col items-start">
+                  <span className="font-semibold text-sm text-gray-900">
+                    {selectedAgent === 'prompt-agent' ? 'Prompt agent' : 'Visual agent'}
+                  </span>
+                  <span className="text-xs text-gray-500 font-normal">
+                    {selectedAgent === 'prompt-agent' ? '提示智能体' : '视觉智能体'}
+                  </span>
+                </div>
               </div>
             </SelectTrigger>
-            <SelectContent className="bg-white border border-gray-200 rounded-lg shadow-lg">
-              <SelectItem value="prompt-agent" className="flex flex-col items-start p-3 cursor-pointer hover:bg-gray-50">
-                <div className="font-medium text-gray-900">Prompt agent</div>
-                <div className="text-xs text-gray-500">适用于文本分析和对话任务</div>
+            <SelectContent className="w-64 bg-white border border-gray-200 rounded-xl shadow-xl p-2 z-50">
+              <SelectItem 
+                value="prompt-agent" 
+                className="rounded-lg p-3 cursor-pointer hover:bg-gray-50 focus:bg-gray-50 data-[highlighted]:bg-gray-50"
+              >
+                <div className="flex flex-col items-start w-full">
+                  <div className="font-semibold text-sm text-gray-900">Prompt agent</div>
+                  <div className="text-xs text-gray-500 mt-1">适用于文本分析和对话任务</div>
+                </div>
               </SelectItem>
-              <SelectItem value="visual-agent" className="flex flex-col items-start p-3 cursor-pointer hover:bg-gray-50">
-                <div className="font-medium text-gray-900">Visual agent</div>
-                <div className="text-xs text-gray-500">适用于图像分析和视觉推理</div>
+              <SelectItem 
+                value="visual-agent" 
+                className="rounded-lg p-3 cursor-pointer hover:bg-gray-50 focus:bg-gray-50 data-[highlighted]:bg-gray-50"
+              >
+                <div className="flex flex-col items-start w-full">
+                  <div className="font-semibold text-sm text-gray-900">Visual agent</div>
+                  <div className="text-xs text-gray-500 mt-1">适用于图像分析和视觉推理</div>
+                </div>
               </SelectItem>
             </SelectContent>
           </Select>
