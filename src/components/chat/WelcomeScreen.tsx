@@ -60,7 +60,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onChatStart }) => 
       <div className="w-full max-w-4xl mx-auto mb-8">
         <div className="flex justify-start">
           <Select value={selectedAgent} onValueChange={setSelectedAgent}>
-            <SelectTrigger className="w-64 h-11 bg-white border border-gray-300 rounded-xl shadow-sm hover:border-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200">
+            <SelectTrigger className="w-64 h-11 bg-white border-0 rounded-xl shadow-sm hover:shadow-md focus:ring-2 focus:ring-blue-500/20 transition-all duration-200">
               <div className="flex items-center justify-between w-full">
                 <div className="flex flex-col items-start">
                   <span className="font-semibold text-sm text-gray-900">
@@ -75,7 +75,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onChatStart }) => 
             <SelectContent className="w-64 bg-white border border-gray-200 rounded-xl shadow-xl p-2 z-50">
               <SelectItem 
                 value="prompt-agent" 
-                className="rounded-lg p-3 cursor-pointer hover:bg-gray-50 focus:bg-gray-50 data-[highlighted]:bg-gray-50"
+                className="rounded-lg p-3 pl-8 cursor-pointer hover:bg-gray-50 focus:bg-gray-50 data-[highlighted]:bg-gray-50"
               >
                 <div className="flex flex-col items-start w-full">
                   <div className="font-semibold text-sm text-gray-900">Prompt agent</div>
@@ -84,7 +84,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onChatStart }) => 
               </SelectItem>
               <SelectItem 
                 value="visual-agent" 
-                className="rounded-lg p-3 cursor-pointer hover:bg-gray-50 focus:bg-gray-50 data-[highlighted]:bg-gray-50"
+                className="rounded-lg p-3 pl-8 cursor-pointer hover:bg-gray-50 focus:bg-gray-50 data-[highlighted]:bg-gray-50"
               >
                 <div className="flex flex-col items-start w-full">
                   <div className="font-semibold text-sm text-gray-900">Visual agent</div>
