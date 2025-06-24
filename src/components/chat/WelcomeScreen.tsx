@@ -4,6 +4,8 @@ import { FileUpload } from './FileUpload';
 import { MessageInput } from './MessageInput';
 import { ExampleCards } from './ExampleCards';
 import { createChatRequest, sendChatMessage } from '../../utils/chatApi';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { ChevronDown } from 'lucide-react';
 import type { ChatMessage } from './ChatApp';
 
 interface WelcomeScreenProps {
@@ -14,6 +16,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onChatStart }) => 
   const [message, setMessage] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState('prompt-agent');
 
   const handleSubmit = async () => {
     if (!message.trim() && files.length === 0) {
@@ -52,26 +55,64 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onChatStart }) => 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-semibold text-gray-900 mb-2">文本分析助手</h1>
-          <p className="text-lg text-gray-600">你好！我是您的专属智能分析助手，请将您的任务描述和需要分析的文本一起输入，然后发送给我。</p>
+    <div className="min-h-screen bg-gray-50 flex flex-col p-4">
+      {/* Top section with agent selector */}
+      <div className="w-full max-w-4xl mx-auto mb-8">
+        <div className="flex justify-start">
+          <Select value={selectedAgent} onValueChange={setSelectedAgent}>
+            <SelectTrigger className="w-48 bg-white border border-gray-200 rounded-lg shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-gray-900">
+                  {selectedAgent === 'prompt-agent' ? 'Prompt agent' : 'Visual agent'}
+                </span>
+                <span className="text-xs text-gray-500 font-normal">
+                  {selectedAgent === 'prompt-agent' ? '提示智能体' : '视觉智能体'}
+                </span>
+              </div>
+            </SelectTrigger>
+            <SelectContent className="bg-white border border-gray-200 rounded-lg shadow-lg">
+              <SelectItem value="prompt-agent" className="flex flex-col items-start p-3 cursor-pointer hover:bg-gray-50">
+                <div className="font-medium text-gray-900">Prompt agent</div>
+                <div className="text-xs text-gray-500">适用于文本分析和对话任务</div>
+              </SelectItem>
+              <SelectItem value="visual-agent" className="flex flex-col items-start p-3 cursor-pointer hover:bg-gray-50">
+                <div className="font-medium text-gray-900">Visual agent</div>
+                <div className="text-xs text-gray-500">适用于图像分析和视觉推理</div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+      </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg border-0">
-          <FileUpload files={files} setFiles={setFiles} />
-          <MessageInput
-            message={message}
-            setMessage={setMessage}
-            files={files}
-            setFiles={setFiles}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-          />
+      {/* Main content area */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="w-full max-w-4xl">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-semibold text-gray-900 mb-2">
+              {selectedAgent === 'prompt-agent' ? '文本分析助手' : '视觉分析助手'}
+            </h1>
+            <p className="text-lg text-gray-600">
+              {selectedAgent === 'prompt-agent' 
+                ? '你好！我是您的专属智能分析助手，请将您的任务描述和需要分析的文本一起输入，然后发送给我。'
+                : '你好！我是您的专属视觉分析助手，请上传图片或描述您的视觉分析需求，然后发送给我。'
+              }
+            </p>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg border-0">
+            <FileUpload files={files} setFiles={setFiles} />
+            <MessageInput
+              message={message}
+              setMessage={setMessage}
+              files={files}
+              setFiles={setFiles}
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+            />
+          </div>
+
+          <ExampleCards onExampleClick={setMessage} />
         </div>
-
-        <ExampleCards onExampleClick={setMessage} />
       </div>
     </div>
   );
