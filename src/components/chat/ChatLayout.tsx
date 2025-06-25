@@ -123,6 +123,16 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
     setComponentData(data);
   };
 
+  const handleMessageClick = (message: ChatMessage) => {
+    // When a message is clicked, show video generation component
+    setActiveComponent('video_generation');
+    setComponentData({
+      status: 'generating',
+      videos: [], // Will be populated when ready
+      messageContent: message.content,
+    });
+  };
+
   const handleNewMessageSent = (conversationId: string) => {
     // Restart SSE connection for the new message
     const lastMessage = messages[messages.length - 1];
@@ -138,6 +148,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
           onNewSession={onNewSession}
           onButtonClick={handleButtonClick}
           onNewMessageSent={handleNewMessageSent}
+          onMessageClick={handleMessageClick}
         />
       </div>
       <div className="w-1/2">

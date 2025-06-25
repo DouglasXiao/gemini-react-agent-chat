@@ -6,9 +6,14 @@ import type { ChatMessage } from './ChatApp';
 interface MessageListProps {
   messages: ChatMessage[];
   onButtonClick: (buttonId: string, action: string, data?: any) => void;
+  onMessageClick?: (message: ChatMessage) => void;
 }
 
-export const MessageList: React.FC<MessageListProps> = ({ messages, onButtonClick }) => {
+export const MessageList: React.FC<MessageListProps> = ({ 
+  messages, 
+  onButtonClick, 
+  onMessageClick 
+}) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,6 +27,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages, onButtonClic
           key={message.message_id}
           message={message}
           onButtonClick={onButtonClick}
+          onMessageClick={onMessageClick}
         />
       ))}
       <div ref={messagesEndRef} />

@@ -2,6 +2,7 @@
 import React from 'react';
 import { TextAnalysisComponent } from './components/TextAnalysisComponent';
 import { ModelSelectionComponent } from './components/ModelSelectionComponent';
+import { VideoGenerationComponent } from './components/VideoGenerationComponent';
 
 interface RightPanelProps {
   activeComponent: string | null;
@@ -31,6 +32,8 @@ export const RightPanel: React.FC<RightPanelProps> = ({
         return <TextAnalysisComponent data={componentData} />;
       case 'model_selection':
         return <ModelSelectionComponent data={componentData} />;
+      case 'video_generation':
+        return <VideoGenerationComponent data={componentData} />;
       default:
         return (
           <div className="p-6">
@@ -48,7 +51,7 @@ export const RightPanel: React.FC<RightPanelProps> = ({
 
   return (
     <div className="h-full bg-white">
-      {activeComponent && (
+      {activeComponent && activeComponent !== 'video_generation' && (
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">详细信息</h2>
           <button

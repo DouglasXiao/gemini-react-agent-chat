@@ -11,6 +11,7 @@ interface ChatSidebarProps {
   onNewSession: () => void;
   onButtonClick: (buttonId: string, action: string, data?: any) => void;
   onNewMessageSent?: (conversationId: string) => void;
+  onMessageClick?: (message: ChatMessage) => void;
 }
 
 export const ChatSidebar: React.FC<ChatSidebarProps> = ({
@@ -19,6 +20,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   onNewSession,
   onButtonClick,
   onNewMessageSent,
+  onMessageClick,
 }) => {
   const [newMessage, setNewMessage] = useState('');
   const [files, setFiles] = useState<File[]>([]);
@@ -75,7 +77,11 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
         </button>
       </div>
 
-      <MessageList messages={messages} onButtonClick={onButtonClick} />
+      <MessageList 
+        messages={messages} 
+        onButtonClick={onButtonClick} 
+        onMessageClick={onMessageClick}
+      />
 
       <div className="border-t border-gray-200 p-4">
         <MessageInput

@@ -5,9 +5,23 @@ import type { ChatMessage } from './ChatApp';
 interface MessageBubbleProps {
   message: ChatMessage;
   onButtonClick: (buttonId: string, action: string, data?: any) => void;
+  onMessageClick?: (message: ChatMessage) => void;
 }
 
-export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, onButtonClick }) => {
+export const MessageBubble: React.FC<MessageBubbleProps> = ({ 
+  message, 
+  onButtonClick, 
+  onMessageClick 
+}) => {
+  const handleMessageClick = () => {
+    // Check if this message has video-related content or should trigger video generation
+    if (onMessageClick && (message.content.toLowerCase().includes('video') || 
+                          message.content.toLowerCase().includes('generate') ||
+                          message.role === 'assistant')) {
+      onMessageClick(message);
+    }
+  };
+
   return (
     <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
       <div className={`flex gap-3 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -17,11 +31,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, onButtonC
           {message.role === 'user' ? 'U' : 'AI'}
         </div>
         
-        <div className={`rounded-lg p-3 ${
-          message.role === 'user' 
-            ? 'bg-blue-500 text-white' 
-            : 'bg-gray-100 text-gray-900'
-        }`}>
+        <div 
+          className={`rounded-lg p-3 cursor-pointer transition-opacity hover:opacity-80 ${
+            message.role === 'user' 
+              ? 'bg-blue-500 text-white' 
+              : 'bg-gray-100 text-gray-900'
+          }`}
+          onClick={handleMessageClick}
+        >
           <div className="whitespace-pre-wrap">{message.content}</div>
           
           {message.files && message.files.length > 0 && (
@@ -39,7 +56,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, onButtonC
               {message.buttons.map((button) => (
                 <button
                   key={button.id}
-                  onClick={() => onButtonClick(button.id, button.action, button.data)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onButtonClick(button.id, button.action, button.data);
+                  }}
                   className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
                 >
                   {button.label}
