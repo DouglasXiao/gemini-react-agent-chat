@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChatSidebar } from './ChatSidebar';
 import { RightPanel } from './RightPanel';
@@ -140,7 +139,7 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-full bg-gray-50">
       <div className="w-1/2 border-r border-gray-200">
         <ChatSidebar
           messages={messages}
