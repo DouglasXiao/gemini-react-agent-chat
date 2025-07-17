@@ -3,6 +3,7 @@ import React from 'react';
 import { TextAnalysisComponent } from './components/TextAnalysisComponent';
 import { ModelSelectionComponent } from './components/ModelSelectionComponent';
 import { VideoGenerationComponent } from './components/VideoGenerationComponent';
+import { PromptVariableEditor } from './components/PromptVariableEditor';
 
 interface RightPanelProps {
   activeComponent: string | null;
@@ -34,6 +35,8 @@ export const RightPanel: React.FC<RightPanelProps> = ({
         return <ModelSelectionComponent data={componentData} />;
       case 'video_generation':
         return <VideoGenerationComponent data={componentData} />;
+      case 'prompt_variable_editor':
+        return <PromptVariableEditor data={componentData} />;
       default:
         return (
           <div className="p-6">
